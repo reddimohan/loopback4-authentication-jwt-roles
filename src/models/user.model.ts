@@ -1,7 +1,7 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
-import {Blog} from './blog.model';
+import { Entity, model, property, hasMany } from '@loopback/repository';
+import { Blog } from './blog.model';
 
-@model({settings: {strict: false}})
+@model({ settings: { strict: false } })
 export class User extends Entity {
   @property({
     type: 'number',
@@ -36,6 +36,11 @@ export class User extends Entity {
 
   @hasMany(() => Blog)
   blogs: Blog[];
+
+  @property.array(String)
+  permissions: String[]
+
+
   // Define well-known properties here
 
   // Indexer property to allow additional data

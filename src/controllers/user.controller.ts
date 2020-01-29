@@ -16,45 +16,102 @@ import {
   put,
   del,
   requestBody,
+  getJsonSchemaRef,
 } from '@loopback/rest';
-import {User} from '../models';
-import {UserRepository} from '../repositories';
+import { User } from '../models';
+import { UserRepository, Credentials } from '../repositories';
+import { CredentialsRequestBody } from './specs/user.controller.spec';
+import { UserServiceBindings, TokenServiceBindings, PasswordHasherBindings } from '../keys';
+import { inject } from '@loopback/core';
+import { MyUserService } from '../services/user.service';
+import { JWTService } from '../services/jwt-service';
+import { BcryptHasher } from '../services/hash.password.bcrypt';
+import { PermissionKeys } from '../authorization/permission-keys';
+import { validateCredentials } from '../services/validator';
+import * as _ from 'lodash';
+import { authenticate } from '@loopback/authentication';
 
 export class UserController {
   constructor(
     @repository(UserRepository)
-    public userRepository : UserRepository,
-  ) {}
+    public userRepository: UserRepository,
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
+    public hasher: BcryptHasher,
+    @inject(UserServiceBindings.USER_SERVICE)
+    public userService: MyUserService,
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: JWTService,
+  ) { }
 
-  @post('/users', {
+  @authenticate('jwt', { required: [PermissionKeys.UserManagement] })
+  @post('/users/signup', {
     responses: {
       '200': {
-        description: 'User model instance',
-        content: {'application/json': {schema: getModelSchemaRef(User)}},
+        description: 'User',
+        content: {
+          schema: getJsonSchemaRef(User),
+        },
       },
     },
   })
-  async create(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(User, {
-            title: 'NewUser',
-            exclude: ['id'],
-          }),
-        },
+  async signup(@requestBody({
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(User, {
+          title: 'NewUser',
+          exclude: ['id', 'permissions', 'additionalProp1'],
+        }),
       },
-    })
-    user: Omit<User, 'id'>,
-  ): Promise<User> {
-    return this.userRepository.create(user);
+    },
+  })
+  userData: User) {
+    validateCredentials(_.pick(userData, ['email', 'password']));
+    userData.permissions = [
+      PermissionKeys.AuthFeatures,
+      PermissionKeys.GetBlogs
+    ]
+    userData.password = await this.hasher.hashPassword(userData.password)
+
+    const newUser = await this.userRepository.create(userData);
+    delete newUser.password;
+
+    return newUser;
   }
 
+  @post('/users/login', {
+    responses: {
+      '200': {
+        description: 'Token',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                token: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  async login(@requestBody(CredentialsRequestBody) credentials: Credentials): Promise<{ token: string }> {
+    const user = await this.userService.verifyCredentials(credentials);
+    const userProfile = this.userService.convertToUserProfile(user);
+    userProfile.permissions = user.permissions;
+    const jwt = await this.jwtService.generateToken(userProfile);
+    return Promise.resolve({ token: jwt });
+  }
+
+
+  @authenticate('jwt', { required: [PermissionKeys.UserBasic] })
   @get('/users/count', {
     responses: {
       '200': {
         description: 'User model count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -64,6 +121,7 @@ export class UserController {
     return this.userRepository.count(where);
   }
 
+  @authenticate('jwt', { required: [PermissionKeys.UserManagement] })
   @get('/users', {
     responses: {
       '200': {
@@ -72,7 +130,7 @@ export class UserController {
           'application/json': {
             schema: {
               type: 'array',
-              items: getModelSchemaRef(User, {includeRelations: true}),
+              items: getModelSchemaRef(User, { includeRelations: true }),
             },
           },
         },
@@ -85,35 +143,14 @@ export class UserController {
     return this.userRepository.find(filter);
   }
 
-  @patch('/users', {
-    responses: {
-      '200': {
-        description: 'User PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
-      },
-    },
-  })
-  async updateAll(
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(User, {partial: true}),
-        },
-      },
-    })
-    user: User,
-    @param.query.object('where', getWhereSchemaFor(User)) where?: Where<User>,
-  ): Promise<Count> {
-    return this.userRepository.updateAll(user, where);
-  }
-
+  @authenticate('jwt', { required: [PermissionKeys.UserManagement] })
   @get('/users/{id}', {
     responses: {
       '200': {
         description: 'User model instance',
         content: {
           'application/json': {
-            schema: getModelSchemaRef(User, {includeRelations: true}),
+            schema: getModelSchemaRef(User, { includeRelations: true }),
           },
         },
       },
@@ -126,27 +163,7 @@ export class UserController {
     return this.userRepository.findById(id, filter);
   }
 
-  @patch('/users/{id}', {
-    responses: {
-      '204': {
-        description: 'User PATCH success',
-      },
-    },
-  })
-  async updateById(
-    @param.path.number('id') id: number,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(User, {partial: true}),
-        },
-      },
-    })
-    user: User,
-  ): Promise<void> {
-    await this.userRepository.updateById(id, user);
-  }
-
+  @authenticate('jwt', { required: [PermissionKeys.UserManagement] })
   @put('/users/{id}', {
     responses: {
       '204': {
@@ -161,6 +178,8 @@ export class UserController {
     await this.userRepository.replaceById(id, user);
   }
 
+
+  @authenticate('jwt', { required: [PermissionKeys.UserManagement] })
   @del('/users/{id}', {
     responses: {
       '204': {
