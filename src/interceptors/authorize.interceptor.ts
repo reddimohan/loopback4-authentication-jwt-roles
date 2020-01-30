@@ -11,21 +11,21 @@ import { inject } from '@loopback/core';
 import { AuthenticationBindings, AuthenticationMetadata } from '@loopback/authentication';
 import { RequiredPermissions, MyUserProfile } from '../types';
 
-import {intersection} from 'lodash';
+import { intersection } from 'lodash';
 import { HttpErrors } from '@loopback/rest';
 
 /**
  * This class will be bound to the application as an `Interceptor` during
  * `boot`
  */
-@globalInterceptor('', {tags: {name: 'authorize'}})
+@globalInterceptor('', { tags: { name: 'authorize' } })
 export class AuthorizeInterceptor implements Provider<Interceptor> {
   constructor(
     @inject(AuthenticationBindings.METADATA)
     public metadata: AuthenticationMetadata,
     @inject.getter(AuthenticationBindings.CURRENT_USER)
     public getCurrentUser: Getter<MyUserProfile>
-  ) {}
+  ) { }
 
   /**
    * This method is used by LoopBack context to produce an interceptor function
@@ -56,10 +56,11 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
       const user = await this.getCurrentUser();
       console.log("User Permissions: ", user.permissions)
       const results = intersection(user.permissions, requiredPermissions.required).length;
-      if (results !== requiredPermissions.required.length) {
+      // if (results !== requiredPermissions.required.length) {
+      if (!results) {
         throw new HttpErrors.Forbidden('INVALID ACCESS PERMISSIONS')
       }
-      
+
       return result;
     } catch (err) {
       // Add error handling logic here
