@@ -1,8 +1,8 @@
-import {UserProfile, securityId} from '@loopback/security';
-import {promisify} from 'util';
-import {HttpErrors} from '@loopback/rest';
-import {inject} from '@loopback/core';
-import {TokenServiceBindings} from '../keys';
+import { UserProfile, securityId } from '@loopback/security';
+import { promisify } from 'util';
+import { HttpErrors } from '@loopback/rest';
+import { inject } from '@loopback/core';
+import { TokenServiceBindings } from '../keys';
 const jwt = require('jsonwebtoken');
 const signAsync = promisify(jwt.sign);
 const verifyAsync = promisify(jwt.verify);
@@ -41,11 +41,12 @@ export class JWTService {
       const decryptedToken = await verifyAsync(token, this.jwtSecret);
       // don't copy over  token field 'iat' and 'exp', nor 'email' to user profile
       userProfile = Object.assign(
-        {[securityId]: '', name: '', permissions: []},
+        { [securityId]: '', name: '', permissions: [] },
         {
-          id: decryptedToken.id, 
-          name: decryptedToken.name, 
-          permissions: decryptedToken.permissions
+          id: decryptedToken.id,
+          name: decryptedToken.name,
+          permissions: decryptedToken.permissions,
+          email: decryptedToken.email
         },
       );
     } catch (error) {

@@ -29,7 +29,8 @@ import { BcryptHasher } from '../services/hash.password.bcrypt';
 import { PermissionKeys } from '../authorization/permission-keys';
 import { validateCredentials } from '../services/validator';
 import * as _ from 'lodash';
-import { authenticate } from '@loopback/authentication';
+import { authenticate, AuthenticationBindings } from '@loopback/authentication';
+import { UserProfile, securityId } from '@loopback/security';
 
 export class UserController {
   constructor(
@@ -190,4 +191,17 @@ export class UserController {
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.userRepository.deleteById(id);
   }
+
+  @get('/users/me')
+  @authenticate('jwt', { required: [PermissionKeys.AuthFeatures] })
+  async me(
+    @inject(AuthenticationBindings.CURRENT_USER)
+    currentUser: UserProfile
+  ): Promise<UserProfile> {
+    // console.log(currentUser);
+    currentUser.id = currentUser[securityId];
+    delete currentUser[securityId];
+    return Promise.resolve(currentUser);
+  }
+
 }

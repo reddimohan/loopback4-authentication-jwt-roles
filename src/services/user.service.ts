@@ -46,6 +46,6 @@ export class MyUserService implements UserService<User, Credentials> {
         ? `${user.firstName} ${user.lastName}`
         : user.lastName;
     }
-    return { [securityId]: `${user.id}`, name: userName }
+    return { [securityId]: `${user.id}`, name: userName, email: user.email }
   }
 }
