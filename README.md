@@ -161,7 +161,7 @@ Project Link: [https://github.com/reddimohan/loopback4-authentication-jwt-roles]
 [issues-shield]: https://img.shields.io/github/issues/reddimohan/loopback4-authentication-jwt-roles.svg?style=flat-square
 [issues-url]: https://github.com/reddimohan/loopback4-authentication-jwt-roles/issues
 [license-shield]: https://img.shields.io/github/license/reddimohan/loopback4-authentication-jwt-roles.svg?style=flat-square
-[license-url]: https://github.com/reddimohan/loopback4-authentication-jwt-roles/blob/master/LICENSE.txt
+[license-url]: https://github.com/reddimohan/loopback4-authentication-jwt-roles/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/reddimohan
 [product-screenshot-1]: images/home.png
