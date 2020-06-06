@@ -1,13 +1,5 @@
-# api
-install Nodejs<br>
-install Loopback 4 CLI `npm install -g @loopback/cli`<br>
-git clone <br>
-npm install <br>
-Create database [blog]<br>
-update db details in src/datasources/mysql.datasource.config.json<br>
-npm run build<br>
-num run migrate<br>
-npm start - to start the application<br>
+
+
 
 [![LoopBack](https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
 # loopback4-authentication-jwt-roles
@@ -50,7 +42,6 @@ npm start - to start the application<br>
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
-* [Usage](#usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
@@ -62,19 +53,15 @@ npm start - to start the application<br>
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot-1]](https://reddimohan.github.io)
-[![Product Name Screen Shot][product-screenshot-2]](https://reddimohan.github.io)
-
-Here's a blank template to get started:
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`reddimohan`, `repo`, `twitter_handle`, `email`
-
+[![https://reddimohan.github.io][product-screenshot-1]](API home screen)
+### API Docs
+[![https://reddimohan.github.io][product-screenshot-2]](API docs link)
 
 ### Built With
 
-* []()
-* []()
-* []()
+* [Loopback 4](https://loopback.io/doc/en/lb4)
+* [MySQL](https://www.mysql.com)
+* [jwt](https://jwt.io)
 
 
 
@@ -86,7 +73,8 @@ To get a local copy up and running follow these simple steps.
 ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
+* node.js, npm
+
 ```sh
 npm install npm@latest -g
 ```
@@ -101,16 +89,33 @@ git clone https://github.com/reddimohan/loopback4-authentication-jwt-roles.git
 ```sh
 npm install
 ```
-
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
+3. Create a database (MySQL)
+4. Update database details in src/datasources/mysql.datasource.config.json file
+```sh
+{
+  "name": "mysql",
+  "connector": "mysql",
+  "url": "",
+  "host": "localhost",
+  "port": 3306,
+  "user": "<username>",
+  "password": "<password>",
+  "database": "<db_name>"
+}
+```
+5. Migrade database schema
+```sh
+npm run build
+num run migrate
+```
+6. Start the application
+```sh
+npm start
+```
+7. Install Loopback 4 CLI - This will be useful when you want to start developing on top this repo
+```sh
+npm install -g @loopback/cli
+```
 
 
 <!-- ROADMAP -->
@@ -143,18 +148,11 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email
+Mohan - [LinkedIn](https://linkedin.com/in/reddimohan) - [Twitter](https://twitter.com/reddimohan)
 
 Project Link: [https://github.com/reddimohan/loopback4-authentication-jwt-roles](https://github.com/reddimohan/loopback4-authentication-jwt-roles)
 
 
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-
-* []()
-* []()
-* []()
 
 
 
