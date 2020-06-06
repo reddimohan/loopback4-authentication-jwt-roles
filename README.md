@@ -1,10 +1,3 @@
-
-
-
-[![LoopBack](https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
-# loopback4-authentication-jwt-roles
-
-
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -53,9 +46,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![https://reddimohan.github.io][product-screenshot-1]](API home screen)
+[![https://reddimohan.github.io][product-screenshot-1]]()
 ### API Docs
-[![https://reddimohan.github.io][product-screenshot-2]](API docs link)
+[![https://reddimohan.github.io][product-screenshot-2]]()
 
 ### Built With
 
