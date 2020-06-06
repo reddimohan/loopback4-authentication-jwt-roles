@@ -44,7 +44,6 @@ export class UserController {
     public jwtService: JWTService,
   ) { }
 
-  @authenticate('jwt', { required: [PermissionKeys.UserManagement] })
   @post('/users/signup', {
     responses: {
       '200': {
